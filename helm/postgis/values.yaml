@@ -1,0 +1,15 @@
+replicaCount: 1
+
+image:
+  repository: postgis/postgis
+  tag: 16-3.4
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 5432
+
+persistence:
+  enabled: true
+  storageClass: microk8s-hostpath
+  size: 1Gi

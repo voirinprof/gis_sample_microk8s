@@ -1,0 +1,35 @@
+replicaCount: 3
+
+image:
+  repository: my-flask-app
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 5000
+
+ingress:
+  enabled: true
+  hosts:
+    - host: flask.local
+      paths:
+        - path: /
+          pathType: Prefix
+    - host: ""  # Règle pour les requêtes sans Host ou avec IP
+      paths:
+        - path: /
+          pathType: Prefix
+
+livenessProbe:
+  httpGet:
+    path: /status
+    port: 5000
+  initialDelaySeconds: 15
+  periodSeconds: 10
+readinessProbe:
+  httpGet:
+    path: /status
+    port: 5000
+  initialDelaySeconds: 5
+  periodSeconds: 5

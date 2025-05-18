@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-flask
+  labels:
+    app: flask
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: flask
+  template:
+    metadata:
+      labels:
+        app: flask
+    spec:
+      containers:
+        - name: flask
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 5000
+          env:
+            - name: DB_HOST
+              value: "postgis-service.default.svc.cluster.local"
+            - name: DB_NAME
+              value: "gisdb"
+            - name: DB_USER
+              value: "gisuser"
+            - name: DB_PASS
+              value: "gispassword"
+            - name: DB_PORT
+              value: "5432"

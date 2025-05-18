@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-postgis
+  labels:
+    app: postgis
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: postgis
+  template:
+    metadata:
+      labels:
+        app: postgis
+    spec:
+      containers:
+        - name: postgis
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: gisdb
+            - name: POSTGRES_USER
+              value: gisuser
+            - name: POSTGRES_PASSWORD
+              value: gispassword
+          volumeMounts:
+            - name: postgis-data
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: postgis-data
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-postgis-pvc
